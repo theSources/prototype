@@ -1,0 +1,30 @@
+{
+  "name": "theSources",
+  "version": "0.0.1",
+  "description": "theSources prototype",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theSources/prototype.git"
+  },
+  "author": "Mike Limansky <mike.limansky@gmail.com>",
+  "contributors": [
+    "Mike Limansky <mike.limansky@gmail.com>",
+    "Victor Portnov <vic.portnov@gmail.com>"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/theSources/prototype/issues"
+  },
+  "homepage": "https://github.com/theSources/prototype",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-bower": "0.0.10",
+    "gulp-jshint": "^1.9.2",
+    "gulp-less": "^3.0.0",
+    "gulp-uglify": "^1.1.0"
+  }
+}
