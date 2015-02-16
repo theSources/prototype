@@ -1,14 +1,27 @@
 var gulp = require('gulp');
-var bower = require('gulp-bower');
+var bower = require('gulp-bower-deps');
 var webserver = require('gulp-webserver');
 
 var config = {
-    bowerDir : './bower_components'
+    bower: {
+        directory: './bower_components',
+        deps: {
+            fontawesome: {
+                version: '^4.3.0',
+                files: 'fontawesome.css'
+            },
+            bootstrap: {
+                version: '~3.3.2',
+                files: [ 'bootstrap.js', 'bootstrap.css' ]
+            }
+        }
+    }
 };
 
-gulp.task('bower', function() {
-    return bower().pipe(gulp.dest(config.bowerDir));
-});
+
+bower = bower(config.bower);
+
+bower.installtask(gulp);
 
 gulp.task('server', function() {
     gulp.src('html')
