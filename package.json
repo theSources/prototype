@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/theSources/prototype",
   "devDependencies": {
+    "del": "^1.1.1",
     "gulp": "^3.8.11",
     "gulp-bower-deps": "^0.2.3",
     "gulp-jshint": "^1.9.2",
