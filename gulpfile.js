@@ -7,6 +7,7 @@ var gulpif = require('gulp-if');
 var amdOtimize = require('gulp-amd-optimize');
 var concat = require('gulp-concat');
 var sourcemaps = require('gulp-sourcemaps');
+var lazypipe = require('lazypipe');
 
 var del = require('del');
 var path = require('path');
@@ -56,6 +57,13 @@ var isInPath = function (dirPath) {
 
 var sources = [allFiles(paths.html), allFiles(paths.js)].concat(bower.deps);
 
+var jsBuild = lazypipe()
+                .pipe(sourcemaps.init)
+                .pipe(remember, 'js')
+                .pipe(amdOtimize, 'main')
+                .pipe(concat, 'index.js')
+                .pipe(sourcemaps.write);
+
 
 gulp.task('server', function() {
   gulp.src(paths.dist)
@@ -71,11 +79,7 @@ gulp.task('clean', function () {
 gulp.task('build', ['bower'], function () {
   return gulp.src(sources)
              .pipe(cached('build'))
-             .pipe(gulpif(isInPath(paths.js), sourcemaps.init()))
-             .pipe(remember('js'))
-             .pipe(gulpif(isInPath(paths.js), amdOtimize('main')))
-             .pipe(gulpif(isInPath(paths.js), concat('index.js')))
-             .pipe(gulpif(isInPath(paths.js), sourcemaps.write()))
+             .pipe(gulpif(isInPath(paths.js), jsBuild()))
              .pipe(gulp.dest(paths.dist));
 });
 
