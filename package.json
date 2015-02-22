@@ -23,8 +23,11 @@
   "devDependencies": {
     "del": "^1.1.1",
     "gulp": "^3.8.11",
+    "gulp-amd-optimize": "^0.4.3",
     "gulp-bower-deps": "^0.2.3",
     "gulp-cached": "^1.0.2",
+    "gulp-concat": "^2.5.1",
+    "gulp-if": "^1.2.5",
     "gulp-jshint": "^1.9.2",
     "gulp-less": "^3.0.0",
     "gulp-remember": "^0.3.0",
