@@ -6,6 +6,7 @@ var remember = require('gulp-remember');
 var gulpif = require('gulp-if');
 var amdOtimize = require('gulp-amd-optimize');
 var concat = require('gulp-concat');
+var sourcemaps = require('gulp-sourcemaps');
 
 var del = require('del');
 var path = require('path');
@@ -70,8 +71,10 @@ gulp.task('clean', function () {
 gulp.task('build', ['bower'], function () {
   return gulp.src(sources)
              .pipe(cached('build'))
+             .pipe(gulpif(isInPath(paths.js), sourcemaps.init()))
              .pipe(gulpif(isInPath(paths.js), amdOtimize('main')))
              .pipe(gulpif(isInPath(paths.js), concat('index.js')))
+             .pipe(gulpif(isInPath(paths.js), sourcemaps.write()))
              .pipe(remember('build'))
              .pipe(gulp.dest(paths.dist));
 });
