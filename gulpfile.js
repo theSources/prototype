@@ -72,10 +72,10 @@ gulp.task('build', ['bower'], function () {
   return gulp.src(sources)
              .pipe(cached('build'))
              .pipe(gulpif(isInPath(paths.js), sourcemaps.init()))
+             .pipe(remember('js'))
              .pipe(gulpif(isInPath(paths.js), amdOtimize('main')))
              .pipe(gulpif(isInPath(paths.js), concat('index.js')))
              .pipe(gulpif(isInPath(paths.js), sourcemaps.write()))
-             .pipe(remember('build'))
              .pipe(gulp.dest(paths.dist));
 });
 
@@ -84,7 +84,7 @@ gulp.task('watch', function () {
   watcher.on('change', function (event) {
     if (event.type === 'deleted') {
       delete cached.caches.build[event.path];
-      remember.forget('build', event.path);
+      remember.forget('js', event.path);
     }
   });
 });
