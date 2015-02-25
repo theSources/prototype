@@ -3,11 +3,10 @@ var bower = require('gulp-bower-deps');
 var webserver = require('gulp-webserver');
 var cached = require('gulp-cached');
 var remember = require('gulp-remember');
-var gulpif = require('gulp-if');
 var amdOtimize = require('gulp-amd-optimize');
 var concat = require('gulp-concat');
 var sourcemaps = require('gulp-sourcemaps');
-var lazypipe = require('lazypipe');
+var gulpif = require('gulp-if');
 
 var del = require('del');
 var path = require('path');
@@ -19,6 +18,21 @@ var config = {
       requirejs: {
         version: '^2.1.0',
         files: 'require.js'
+      },
+      underscore: {
+        version: '^1.8.2',
+        files: ['underscore.js']
+      },
+      sinon: {
+        files: 'pkg/sinon.js'
+      },
+      exoskeleton: {
+        version: '^0.7.0',
+        files: 'exoskeleton.js'
+      },
+      jquery: {
+        version: '^2.1.3',
+        files: 'dist/jquery.js'
       },
       fontawesome: {
         version: '^4.3.0',
@@ -46,23 +60,9 @@ var allFiles = function (filePath) {
   return filePath + '/*';
 };
 
-var isInPath = function (dirPath) {
-  var absolutePath = path.resolve(dirPath);
 
-  return function (file) {
-    return file.path.indexOf(absolutePath) === 0;
-  };
-};
-
-
-var sources = [allFiles(paths.html), allFiles(paths.js)].concat(bower.deps);
-
-var jsBuild = lazypipe()
-                .pipe(sourcemaps.init)
-                .pipe(remember, 'js')
-                .pipe(amdOtimize, 'main')
-                .pipe(concat, 'index.js')
-                .pipe(sourcemaps.write);
+var assets = [allFiles(paths.html)].concat(bower.deps);
+var sources = [allFiles(paths.js)].concat(bower.deps);
 
 
 gulp.task('server', function() {
@@ -76,19 +76,34 @@ gulp.task('clean', function () {
   del(paths.dist);
 });
 
-gulp.task('build', ['bower'], function () {
+gulp.task('jsBuild', ['bower'], function () {
   return gulp.src(sources)
-             .pipe(cached('build'))
-             .pipe(gulpif(isInPath(paths.js), jsBuild()))
+             .pipe(cached('js'))
+             .pipe(sourcemaps.init())
+             .pipe(remember('js'))
+             .pipe(amdOtimize('main'))
+             .pipe(gulpif(function (file) { return bower.deps.indexOf(file.path) < 0; }, concat('index.js')))
+             .pipe(sourcemaps.write())
              .pipe(gulp.dest(paths.dist));
 });
+
+gulp.task('assetsBuild', ['bower'], function () {
+  return gulp.src(assets)
+    .pipe(cached('assets'))
+    .pipe(remember('assets'))
+    .pipe(gulp.dest(paths.dist));
+});
+
+gulp.task('build', ['jsBuild', 'assetsBuild']);
 
 gulp.task('watch', function () {
   var watcher = gulp.watch(sources, ['build']);
   watcher.on('change', function (event) {
     if (event.type === 'deleted') {
-      delete cached.caches.build[event.path];
+      delete cached.caches.js[event.path];
+      delete cached.caches.assets[event.path];
       remember.forget('js', event.path);
+      remember.forget('assets', event.path);
     }
   });
 });
